@@ -1,0 +1,256 @@
+﻿<html>
+	<meta name="viewport"content="width=device-width,initial-scale=1">
+	<title>Battery</title>
+	<style>
+		body{
+			margin:0;
+			padding:0;
+			align-items:center;
+			justify-content:center;
+		}
+	.container{
+		position:relative;
+		background:#232323;
+		width:100%;
+		margin:0;
+		height:100%;
+		top:0;
+		left:0;
+		align-items:center;
+		justify-content:center;
+		overflow:hidden;
+	}
+.container .info h2{
+	color:#63cdff;
+	text-align:center;
+	font-size:30px;
+	font-family:Georgia;
+	z-index:1;
+	transition:0.5s ease-in-out;
+}
+.container .info:hover h2{
+	font-size:20px;
+	}
+.container .info:before{
+	content:'';
+	width:100%;
+	position:absolute;
+	height:100%;
+	background:hsl(100, 100%,40%);
+ 	clip-path:circle(160px at 40% 80%);
+ 	transition:0.5s ease-in-out;
+}
+.container .info:hover:before{
+ 	clip-path:circle(190px at 40% 80%);
+}
+.container .info:after{
+	content:'';
+	width:10%;
+	position:absolute;
+	border-top-right-radius:8px;
+	border-top-left-radius:8px;
+	height:2.5%;
+	background:hsl(100,100%,60%);
+	top:86px;
+	transition:0.5s ease-in-out;
+	left:43%;
+	}
+.container .info:hover:after{
+	top:161px;
+	}
+.container .info span{
+	font-size:15px;
+	margin:0 5px;
+	transition:0.4s;
+	z-index:-1;
+}
+.container .info  span:first-child{
+	color:white;
+	transition-delay:0.5s;
+	transition:0.6s ease-in-out;
+}
+.container .info  span:nth-child(2){
+	color:#00ffcc;
+	transition:0.6s ease-in-out;
+	transition-delay:0.6s;
+}
+.container .info .data .time-status span:first-child{
+	color:white;
+	transition-delay:0.6s;
+	transition:0.6s ease-in-out;
+	margin:0 6px;
+	display:inline;
+}
+.container .info .data .time-status span:last-child{
+	display:inline-block;
+	transition-delay:0.6s;
+	transition:0.6s ease-in-out;
+	margin:0 6px;
+	color:#3cdfff;
+	}
+.container .info .battery{
+	width:45%;
+	height:50%;
+	background:hsl(100, 100%,50%);
+	top:39%;
+	border-radius:5px;
+	box-shadow:0 0 0 2px hsl(100, 100%,50%),
+				0 0 4px green,
+				0 0 50px rgba(0,0,0,0.6);
+	margin:0 10px;
+	left:23%;
+	position:absolute;
+	transform:translateY(-35%);
+	overflow:hidden;
+	transition:0.5s ease-in-out;
+}
+
+.container .info:hover .battery{
+	transform:translateY(-2%);
+}
+
+ .bt-progress{
+	width:100%;
+	background:#232323;
+	height:100%;
+	animation:6s level linear infiite;
+	transform:rotate(0deg);
+	transform:translateY(0%);
+	top:0%;
+	padding:10px;
+	}
+.status{
+}
+ 
+
+.container .info .bat-full{
+	color:red;
+	font-size:29px;
+	position:relative;
+	text-shadow:0 0 2px white,0 0 4px white,0 0 6px white;
+	top:46vh;
+	transition:0.5s ease-in-out;
+	opacity:0;
+	display:none;
+	left:35%
+	
+}
+.container .info .tap{
+	position:relative;
+	font-size:18px;
+	top:45vh;
+	transition:0.5s ease-in-out;
+	z-index:5;
+	color:white;
+	visibility:visible;
+	left:35%
+	font-style:italic;
+	font-family:verdana;
+	opacity:1;
+	}
+.container .info:hover .tap{
+		
+	opacity:0;
+	visibility:hidden;
+}
+.container .info .data{
+	transition:0.5s ease-in-out;
+	opacity:0;
+	visibility:hidden;
+}
+.container .info .data {
+}
+.container .info:hover .data{
+	visibility:visible;
+	opacity:1;
+	}
+
+
+
+	</style>
+	</style>
+	<body>
+		<div class="container">
+			<div class="info">
+				<h2>Battery Info</h2>
+				<div class="data">
+					<span>Battery Status:</span>
+					<span class="status">Discharging</span>
+					<div>
+					<span>Current Percentage:</span>
+					<span class="current"></span>
+					</div>
+				<div class="time-status">
+					<span>Time to full charge:</span>
+					<span class="time">0hrs:00mins</span>
+				</div>
+			</div>
+				
+			<div class="battery">
+				<div class="bt-progress"></div>
+			</div>
+					<b class="tap">Tap to see battery information</b>
+					<b class="bat-full">Battery full</b>
+			</div>
+		</div>
+	</body>
+<script type="text/javascript">
+	//alert("vibrate" in navigator.vibrate);
+	(function(){
+	navigator.getBattery().then(function(battery){
+	batteryUpdate(battery);
+	
+		battery.onlevelchange = function(){
+			 batteryUpdate(battery);
+		}
+	battery.ondischargingtimeChange = function(){
+	 batteryUpdate(battery);
+	 
+	}
+	
+	battery.onchargingchange = function(){
+	 batteryUpdate(battery);
+	 }
+	//alert(battery.dischargingTime/60);
+	});
+	
+	function batteryUpdate(battery){
+	try{
+		document.querySelector(".status").textContent = battery.charging?"Charging":"Discharging";
+		
+		document.querySelector(".current").textContent =Math.floor(battery.level*100)+"%";
+		
+		var l = document.querySelector(".bt-progress");
+		l.style.transform = "translateY(-"+Math.floor(battery.level*100)+"%)";
+		document.querySelector(".bt-progress").style.content = Math.floor(battery.level*100);
+		
+	document.querySelector(".time").textContent = battery.dischargingTime/360;
+	
+		if(battery.charging){
+			document.querySelector(".battery").style.backgroundColor = "rgba(255,0,0,1)"
+		 document.querySelector(".battery").style.boxShadow ="0 0 0 2px rgba(255,0,0,1),0 5px 12px rgba(255,0,0,0.8)";
+	 }
+	 else if(!battery.charging){
+	 document.querySelector(".battery").style.backgroundColor ='hsl(100,100%,50%)';
+	 document.querySelector(".battery").style.boxShadow = '0 0 0 2px hsl(100, 100%,50%),0 15px 45px rgba(0,0,0,0.6)';
+		// document.querySelector(".battery").style.boxShadow ="0 0  40px yellow";
+		 //document.querySelector(".battery").style.boxShadow ="0 0  40px rgba(0,0,0,0.6)";
+			}
+			
+		if(Math.floor(battery.level*100) == 100 && battery.charging){
+				
+		document.querySelector(".status").textContent = "Fully Charged,Unplug the charger";
+		document.querySelector(".status").style.color = "red";
+		
+	 document.querySelector(".bat-full").style.display ='block';
+			}
+		}
+			catch(err){
+				alert(err);
+			}		
+		}
+	})();
+</script>
+</body>
+		
+			
